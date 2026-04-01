@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import Navbar from "./components/Navbar";
 import ProductCard from "./components/ProductCard";
 import CartModal from "./components/CartModal";
@@ -10,28 +9,20 @@ function App() {
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Load cart
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem("cart")) || [];
-    setCart(saved);
-  }, []);
-
-  // Save cart
-  useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cart));
-  }, [cart]);
-
-  // Fetch products
-  useEffect(() => {
-    axios.get("https://fakestoreapi.com/products")
-      .then(res => {
-        setProducts(res.data);
+    fetch("https://dummyjson.com/products")
+      .then((res) => res.json())
+      .then((data) => {
+        setProducts(data.products);
+        setLoading(false);
+      })
+      .catch(() => {
         setLoading(false);
       });
   }, []);
 
   const addToCart = (product) => {
-    const exists = cart.find(item => item.id === product.id);
+    const exists = cart.find((item) => item.id === product.id);
     if (exists) {
       alert("Item already added to the cart");
       return;
@@ -40,39 +31,35 @@ function App() {
   };
 
   const removeFromCart = (id) => {
-    setCart(cart.filter(item => item.id !== id));
+    setCart(cart.filter((item) => item.id !== id));
   };
+
+  if (loading) {
+    return <h1 className="text-center mt-10 text-2xl">Loading...</h1>;
+  }
 
   return (
     <>
       <Navbar cartCount={cart.length} openCart={() => setShowModal(true)} />
 
-      <div className="max-w-7xl mx-auto p-5">
-        {loading ? (
-          <h1 className="text-center text-xl">Loading...</h1>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 items-stretch">
-            {products.map(product => (
-              <div key={product.id} className="h-full">
-                <ProductCard 
-                  product={product}
-                  addToCart={addToCart}
-                />
-              </div>
-            ))}
-          </div>
-        )}
+      <div className="max-w-7xl mx-auto p-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {products.map((product) => (
+          <ProductCard
+            key={product.id}
+            product={product}
+            addToCart={addToCart}
+          />
+        ))}
       </div>
 
       {showModal && (
-        <CartModal 
+        <CartModal
           cart={cart}
           close={() => setShowModal(false)}
           removeFromCart={removeFromCart}
         />
       )}
     </>
-    
   );
 }
 

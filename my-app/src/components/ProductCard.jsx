@@ -1,31 +1,27 @@
 function ProductCard({ product, addToCart }) {
   return (
-    <div className="border p-4 rounded shadow hover:shadow-lg transition flex flex-col h-full bg-white">
-      
-      {/* Image */}
-      <div className="h-40 flex items-center justify-center">
-        <img 
-          src={product.image}
-          alt={product.title}
-          className="max-h-full object-contain"
-        />
-      </div>
+    <div className="border p-4 rounded shadow flex flex-col">
 
-      {/* Content */}
-      <div className="flex flex-col flex-grow mt-2">
-        <h2 className="text-sm font-semibold">
-          {product.title}
-        </h2>
+      <img
+        src={product.thumbnail}
+        alt={product.title}
+        className="h-40 object-contain mx-auto"
+        onError={(e) => {
+          e.target.src = "https://via.placeholder.com/150";
+        }}
+      />
 
-        <p className="text-green-600 font-bold mt-1">
-          ₹{product.price}
-        </p>
-      </div>
+      <h2 className="text-sm font-semibold mt-2">
+        {product.title}
+      </h2>
 
-      {/* Button bottom */}
-      <button 
+      <p className="text-green-600 font-bold">
+        ₹{product.price}
+      </p>
+
+      <button
         onClick={() => addToCart(product)}
-        className="mt-3 w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 transition"
+        className="bg-green-500 text-white mt-3 p-2 rounded"
       >
         Add to Cart
       </button>
